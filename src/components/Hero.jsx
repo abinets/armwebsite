@@ -85,7 +85,7 @@ const SemiCircleGauge = ({ timeLeft }) => {
   // Maximum value for the gauge (assuming a max of 365 days for the full semi-circle)
   const maxDays = 365;
   // Use a fixed value for demonstration as requested
-  const daysRemaining = 35;
+  const daysRemaining = 33;
 
   // Define colors for the gradient
   const gradientColors = [
@@ -211,7 +211,7 @@ const Hero = () => {
           allowFullScreen
         />
         {/* Updated: Reduced the opacity of the gradient overlay */}
-        <div className="absolute inset-0 bg-gradient-to-br from-blue-900/40 via-blue-800/50 to-blue-900/40 backdrop-blur-sm" />
+        <div className="absolute inset-0 bg-gradient-to-br from-blue-900/15 via-blue-800/25 to-blue-900/15 backdrop-blur-sm" />
       </div>
 
       <div className="relative z-10 container mx-auto px-4 text-center text-white">
