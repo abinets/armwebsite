@@ -10,6 +10,10 @@ export default defineConfig({
       '@': path.resolve(__dirname, './src')
     }
   },
+  server: {
+    host: true, // This exposes the server on the network
+    port: 5173, // Optional: specify the port
+  },
    build: {
     outDir: 'dist',
     sourcemap: true

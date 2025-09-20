@@ -1,13 +1,11 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import SafeIcon from '../common/SafeIcon'; // Assuming SafeIcon correctly renders FiIcons
+import SafeIcon from '../common/SafeIcon';
 import * as FiIcons from 'react-icons/fi';
 
-const { FiDownload } = FiIcons; // Only need FiDownload now
+const { FiDownload } = FiIcons;
 
 const Resources = () => {
-  // Updated ResourcesPlans with more items for a 4x5 grid layout
-  // Each item now includes a title and a downloadLink
   const ResourcesPlans = [
     { title: 'Annual Report 2024', downloadLink: 'https://example.com/annual-report-2024.pdf' },
     { title: 'Fact Sheet Q1 2025', downloadLink: 'https://example.com/fact-sheet-q1-2025.pdf' },
@@ -32,75 +30,74 @@ const Resources = () => {
   ];
 
   return (
-    <section id="Resources" className="py-20 bg-white" style={{ scrollMarginTop: '80px' }}>
-      <div className="container mx-auto px-4">
-        <motion.div
-          initial={{ opacity: 0, y: 50 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
-          viewport={{ once: true }}
-          className="text-center mb-16"
-        >
-          <h2 className="text-4xl md:text-5xl font-bold text-blue-900 mb-6">
-            ARM Resources
-          </h2>
-          <p className="text-lg text-gray-700 max-w-3xl mx-auto">
-            Explore and download our valuable resources.
-          </p>
-        </motion.div>
+    <>
+      <hr className="h-0.5 w-1/2 mx-auto border-none bg-[#015aa4] shadow-lg shadow-[#000000]" style={{ boxShadow: 'inset 0 1px 2px rgba(0, 0, 0, 0.4), inset 0 -1px 2px rgba(0, 0, 0, 0.4)' }} />
 
-        {/* Grid adjusted to 4 columns on medium and larger screens */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 max-w-7xl mx-auto">
-          {ResourcesPlans.map((plan, index) => (
-            <motion.div
-              key={index}
-              initial={{ opacity: 0, y: 50 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: index * 0.1 }} // Slightly reduced delay for more items
-              viewport={{ once: true }}
-              whileHover={{ y: -5 }} // Slightly reduced hover lift
-              className="relative bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden border border-gray-200 p-6 flex flex-col items-center text-center"
-            >
-              {/* Title of the resource */}
-              <h3 className="text-xl font-bold text-blue-900 mb-4 h-16 flex items-center justify-center">
-                {plan.title}
-              </h3>
+      <section id="Resources" className="py-20 bg-gradient-to-br from-[#015aa4] to-[#013c71]" style={{ scrollMarginTop: '80px' }}>
+        <div className="container mx-auto px-4">
+          <motion.div
+            initial={{ opacity: 0, y: 50 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            viewport={{ once: true }}
+            className="text-center mb-16"
+          >
+            <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
+              ARM Resources
+            </h2>
+            <p className="text-lg text-gray-200 max-w-3xl mx-auto">
+              Explore and download our valuable resources.
+            </p>
+          </motion.div>
 
-              {/* QR Code */}
-              <div className="mb-6 flex-shrink-0">
-                <img 
-                  src={`https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(plan.downloadLink)}`}
-                  alt={`QR Code for ${plan.title}`}
-                  className="rounded-lg shadow-md w-36 h-36"
-                  onError={(e) => { e.target.onerror = null; e.target.src="https://placehold.co/150x150/cccccc/000000?text=QR+Error" }} // Fallback image for error
-                />
-                <p className="text-xs text-gray-500 mt-2">Scan to Download</p>
-              </div>
-
-              {/* Download Button */}
-              <motion.a
-                href={plan.downloadLink}
-                target="_blank"
-                rel="noopener noreferrer"
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                className="w-full py-3 px-6 rounded-lg font-semibold transition-all duration-300 relative overflow-hidden group bg-red-600 text-white hover:bg-red-700 flex items-center justify-center space-x-2"
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 max-w-7xl mx-auto">
+            {ResourcesPlans.map((plan, index) => (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, y: 50 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8, delay: index * 0.1 }}
+                viewport={{ once: true }}
+                whileHover={{ y: -5 }}
+                className="relative bg-[#0273a4]/70 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden p-6 flex flex-col items-center text-center"
               >
-                <FiDownload className="w-5 h-5 z-10" />
-                <span className="relative z-10">Download</span>
-                {/* Background hover effect */}
-                <motion.div
-                    className="absolute inset-0 bg-blue-900"
+                <h3 className="text-xl font-bold text-white mb-4 h-16 flex items-center justify-center">
+                  {plan.title}
+                </h3>
+
+                <div className="mb-6 flex-shrink-0">
+                  <img
+                    src={`https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(plan.downloadLink)}&bgcolor=159ae0&color=ffffff`}
+                    alt={`QR Code for ${plan.title}`}
+                    className="rounded-lg shadow-md w-36 h-36"
+                    onError={(e) => { e.target.onerror = null; e.target.src = "https://placehold.co/150x150/0273a4/ffffff?text=QR+Error" }}
+                  />
+                  <p className="text-xs text-gray-200 mt-2">Scan to Download</p>
+                </div>
+
+                <motion.a
+                  href={plan.downloadLink}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  className="w-full py-3 px-6 rounded-lg font-semibold transition-all duration-300 relative overflow-hidden group bg-[#49A6E9] text-white hover:bg-[#3A8FC4] flex items-center justify-center space-x-2"
+                >
+                  <FiDownload className="w-5 h-5 z-10" />
+                  <span className="relative z-10">Download</span>
+                  <motion.div
+                    className="absolute inset-0 bg-[#013c71]"
                     initial={{ x: '-100%' }}
                     whileHover={{ x: 0 }}
                     transition={{ duration: 0.3 }}
-                />
-              </motion.a>
-            </motion.div>
-          ))}
+                  />
+                </motion.a>
+              </motion.div>
+            ))}
+          </div>
         </div>
-      </div>
-    </section>
+      </section>
+    </>
   );
 };
 
