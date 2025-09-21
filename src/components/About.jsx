@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 // --- IMPORTANT: Define your backend server URL here ---
-const BACKEND_URL = 'https://arm.moh.gov.et';
+const BACKEND_URL = 'http://localhost:3001';
 
 // Self-contained Icon component using SVG for a single-file solution
 const Icon = ({ d, className }) => (
@@ -135,35 +135,7 @@ const ExhibitorRegistrationForm = ({ onBackClick, onRegistrationSuccess }) => {
   const handleChange = (e) => {
     const { name, value, type, files, checked } = e.target;
     if (type === 'file') {
-      // File type and size validation
-      if (name === 'conceptNote') {
-        const file = files[0];
-        const allowedTypes = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
-        if (file && !allowedTypes.includes(file.type)) {
-          setErrors(prev => ({ ...prev, conceptNote: 'Invalid file type. Only PDF, DOC, DOCX allowed.' }));
-          return;
-        }
-        if (file && file.size > 10 * 1024 * 1024) {
-          setErrors(prev => ({ ...prev, conceptNote: 'File too large. Max size is 10MB.' }));
-          return;
-        }
-        setErrors(prev => ({ ...prev, conceptNote: undefined }));
-        setFormData({ ...formData, [name]: file });
-      } else if (name === 'animationsVideos') {
-        const file = files[0];
-        if (file && file.type !== 'video/mp4') {
-          setErrors(prev => ({ ...prev, animationsVideos: 'Invalid file type. Only MP4 allowed.' }));
-          return;
-        }
-        if (file && file.size > 500 * 1024 * 1024) {
-          setErrors(prev => ({ ...prev, animationsVideos: 'File too large. Max size is 500MB.' }));
-          return;
-        }
-        setErrors(prev => ({ ...prev, animationsVideos: undefined }));
-        setFormData({ ...formData, [name]: file });
-      } else {
-        setFormData({ ...formData, [name]: files[0] });
-      }
+      setFormData({ ...formData, [name]: files[0] });
     } else if (type === 'checkbox') {
       setFormData(prevData => {
         const updatedAreas = checked
@@ -198,49 +170,46 @@ const ExhibitorRegistrationForm = ({ onBackClick, onRegistrationSuccess }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const isValid = validate();
-    if (!isValid) return;
-    setLoading(true);
-    setError(null);
-    try {
-      const submissionData = new FormData();
-      submissionData.append('organizationName', formData.organizationName);
-      submissionData.append('region', formData.region);
-      submissionData.append('contactPersonName', formData.contactPersonName);
-      submissionData.append('contactPhoneNumber', formData.contactPhoneNumber);
-      submissionData.append('optionalPhoneNumber', formData.optionalPhoneNumber);
-      submissionData.append('contactEmail', formData.contactEmail);
-      submissionData.append('thematicAreas', JSON.stringify(formData.thematicAreas));
-      submissionData.append('conceptNote', formData.conceptNote);
-      submissionData.append('animationsVideos', formData.animationsVideos);
-
-      let response;
+    
+    if (isValid) {
+      setLoading(true);
+      setError(null);
       try {
-        response = await fetch(`${BACKEND_URL}/register_exhibitor`, {
-          method: 'POST',
-          body: submissionData,
+        const submissionData = new FormData();
+        // Append all text fields
+        submissionData.append('organizationName', formData.organizationName);
+        submissionData.append('region', formData.region);
+        submissionData.append('contactPersonName', formData.contactPersonName);
+        submissionData.append('contactPhoneNumber', formData.contactPhoneNumber);
+        submissionData.append('optionalPhoneNumber', formData.optionalPhoneNumber);
+        submissionData.append('contactEmail', formData.contactEmail);
+        
+        // Append thematic areas (as a JSON string)
+        submissionData.append('thematicAreas', JSON.stringify(formData.thematicAreas));
+        
+        // Append file data
+        submissionData.append('conceptNote', formData.conceptNote);
+        submissionData.append('animationsVideos', formData.animationsVideos);
+        
+        // Send the data to the backend
+        const response = await fetch(`${BACKEND_URL}/register`, {
+            method: 'POST',
+            body: submissionData,
         });
-      } catch (networkError) {
-        setError('Network error: Unable to reach the server. Please check your connection and try again.');
-        setLoading(false);
-        return;
-      }
 
-      if (!response.ok) {
-        let errorMsg = `Server error: ${response.statusText}`;
-        try {
-          const errorData = await response.json();
-          errorMsg = errorData.message || errorMsg;
-        } catch {}
-        setError(errorMsg);
-        setLoading(false);
-        return;
-      }
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.message || `Server error: ${response.statusText}`);
+        }
 
-      onRegistrationSuccess();
-    } catch (e) {
-      setError(`An unexpected error occurred: ${e.message}`);
-    } finally {
-      setLoading(false);
+        console.log('Form Submitted Successfully!');
+        onRegistrationSuccess();
+      } catch (e) {
+        console.error('Error submitting form:', e);
+        setError(`An error occurred during registration: ${e.message}`);
+      } finally {
+        setLoading(false);
+      }
     }
   };
 
@@ -430,7 +399,7 @@ const ExhibitorRegistrationForm = ({ onBackClick, onRegistrationSuccess }) => {
               Animations/Videos Attachment <span className="text-red-400">*</span>
             </label>
             <p className="text-xs text-gray-300 mb-2">
-              Accepted file type: MP4 (1080p). Max size: 500MB.
+              Accepted file type: MP4 (1080p). Max size: 50MB.
             </p>
             <input
               type="file"
