@@ -231,7 +231,7 @@ const ExhibitorRegistrationForm = ({ onBackClick, onRegistrationSuccess }) => {
         try {
           const errorData = await response.json();
           errorMsg = errorData.message || errorMsg;
-        } catch { }
+        } catch(e) { }
         setError(errorMsg);
         setLoading(false);
         return;
