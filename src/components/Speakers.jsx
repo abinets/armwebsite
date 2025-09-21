@@ -3,6 +3,14 @@ import { motion } from 'framer-motion';
 
 const Speakers = () => {
   const speakers = [
+
+     {
+      name: 'H.E. Shimelis Abdisa',
+      title: 'President',
+      institution: 'Oromia Region, Ethiopia',
+      bio: 'H.E. Shimelis Abdisa is the President of the Oromia Region. His leadership focuses on regional development, public administration, and fostering stability and growth. He plays a key role in implementing policies that affect healthcare and community well-being in the region.',
+      image: '/shimelis_abdisa.jpg'
+    },
     {
       name: 'H.E. Dr. Mekdes Daba',
       title: 'Minister',
@@ -10,13 +18,7 @@ const Speakers = () => {
       bio: 'A respected public health professional, she has dedicated her career to improving the health and well-being of the Ethiopian population. Her leadership focuses on strengthening the country\'s healthcare system and addressing key public health challenges',
       image: 'https://pbs.twimg.com/profile_images/1779106528462602240/x2W92hyE_400x400.jpg'
     },
-    {
-      name: 'H.E. Shimelis Abdisa',
-      title: 'President',
-      institution: 'Oromia Region, Ethiopia',
-      bio: 'H.E. Shimelis Abdisa is the President of the Oromia Region. His leadership focuses on regional development, public administration, and fostering stability and growth. He plays a key role in implementing policies that affect healthcare and community well-being in the region.',
-      image: '/shimelis_abdisa.jpg'
-    },
+   
     {
       name: 'H.E. Dr. Dereje Duguma',
       title: 'State Minister',
