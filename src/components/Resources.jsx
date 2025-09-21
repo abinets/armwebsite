@@ -12,22 +12,14 @@ const Resources = () => {
     { title: 'Guideline Document A', downloadLink: 'https://example.com/guideline-a.pdf' },
     { title: 'Policy Brief 001', downloadLink: 'https://example.com/policy-001.pdf' },
     { title: 'Research Paper Vol 1', downloadLink: 'https://example.com/research-v1.pdf' },
-    { title: 'Annual Report 2023', downloadLink: 'https://example.com/annual-report-2023.pdf' },
+    { title: 'Annual Report 2024', downloadLink: 'https://example.com/annual-report-2023.pdf' },
     { title: 'Fact Sheet Q4 2024', downloadLink: 'https://example.com/fact-sheet-q4-2024.pdf' },
     { title: 'Guideline Document B', downloadLink: 'https://example.com/guideline-b.pdf' },
     { title: 'Policy Brief 002', downloadLink: 'https://example.com/policy-002.pdf' },
     { title: 'Research Paper Vol 2', downloadLink: 'https://example.com/research-v2.pdf' },
-    { title: 'Annual Report 2022', downloadLink: 'https://example.com/annual-report-2022.pdf' },
+    { title: 'Annual Report 2024', downloadLink: 'https://example.com/annual-report-2022.pdf' },
     { title: 'Fact Sheet Q3 2024', downloadLink: 'https://example.com/fact-sheet-q3-2024.pdf' },
-    { title: 'Guideline Document C', downloadLink: 'https://example.com/guideline-c.pdf' },
-    { title: 'Policy Brief 003', downloadLink: 'https://example.com/policy-003.pdf' },
-    { title: 'Research Paper Vol 3', downloadLink: 'https://example.com/research-v3.pdf' },
-    { title: 'Annual Report 2021', downloadLink: 'https://example.com/annual-report-2021.pdf' },
-    { title: 'Fact Sheet Q2 2024', downloadLink: 'https://example.com/fact-sheet-q2-2024.pdf' },
-    { title: 'Guideline Document D', downloadLink: 'https://example.com/guideline-d.pdf' },
-    { title: 'Policy Brief 004', downloadLink: 'https://example.com/policy-004.pdf' },
-    { title: 'Research Paper Vol 4', downloadLink: 'https://example.com/research-v4.pdf' },
-  ];
+     ];
 
   return (
     <>

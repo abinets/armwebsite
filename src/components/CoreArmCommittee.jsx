@@ -12,6 +12,7 @@ const directImageUrls = [
   'https://media.licdn.com/dms/image/v2/D4D03AQHpC8c9j4GPmg/profile-displayphoto-shrink_800_800/profile-displayphoto-shrink_800_800/0/1695112592329?e=1761177600&v=beta&t=ueoy3mdVR-bM7YwhSg8MYDsBv-Ok4SO25FPbsDQCq0g',
   'https://media.licdn.com/dms/image/v2/D4E03AQE0w3qavweVwQ/profile-displayphoto-shrink_800_800/profile-displayphoto-shrink_800_800/0/1695479892595?e=1761177600&v=beta&t=Sy-8kYmiNLphMQhNsNN-wjLttA9BBxXWK_DM3dLrS0g',
   'https://media.licdn.com/dms/image/v2/D4D03AQGfa467VdvrRg/profile-displayphoto-shrink_800_800/profile-displayphoto-shrink_800_800/0/1720374018409?e=1761177600&v=beta&t=FSJujiJMWjBybdVZCePuIOKlKtV1HoU5e1GL8891J5Y',
+  'https://media.licdn.com/dms/image/v2/D4D03AQGfa467VdvrRg/profile-displayphoto-shrink_800_800/profile-displayphoto-shrink_800_800/0/1720374018409?e=1761177600&v=beta&t=FSJujiJMWjBybdVZCePuIOKlKtV1HoU5e1GL8891J5Y',
 ];
 
 const committeeMembers = [
@@ -65,6 +66,13 @@ const committeeMembers = [
     imageUrl: directImageUrls[6]
   },
   {
+    name: 'Mr. Assegid Samuel',
+    position: 'LEO',
+    department: 'Human Resources For Health Development and Improvement - MoH',
+    role: 'Manages the Human Resources For Health Development and Improvement of the Health Sector.',
+    imageUrl: directImageUrls[10]
+  },
+  {
     name: 'Mrs. Rahima Skihur',
     position: 'Senior Advisor',
     department: 'Misinters\' Office - MoH',
@@ -75,7 +83,7 @@ const committeeMembers = [
     name: 'Mr. Mesoud Mohammed ',
     position: 'Lead',
     department: 'Strategic Affairs - MoH',
-    role: 'Manages critical projects within the Strategic Affairs Office, ensuring goals are met efficiently.',
+    role: 'Leads critical projects within the Strategic Affairs Office, ensuring goals are met efficiently.',
     imageUrl: directImageUrls[9]
   },
 ];

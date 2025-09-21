@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 // --- IMPORTANT: Define your backend server URL here ---
-const BACKEND_URL = 'http://localhost:3001';
+const BACKEND_URL = 'https://arm.moh.gov.et';
 
 // Self-contained Icon component using SVG for a single-file solution
 const Icon = ({ d, className }) => (
@@ -135,7 +135,35 @@ const ExhibitorRegistrationForm = ({ onBackClick, onRegistrationSuccess }) => {
   const handleChange = (e) => {
     const { name, value, type, files, checked } = e.target;
     if (type === 'file') {
-      setFormData({ ...formData, [name]: files[0] });
+      // File type and size validation
+      if (name === 'conceptNote') {
+        const file = files[0];
+        const allowedTypes = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
+        if (file && !allowedTypes.includes(file.type)) {
+          setErrors(prev => ({ ...prev, conceptNote: 'Invalid file type. Only PDF, DOC, DOCX allowed.' }));
+          return;
+        }
+        if (file && file.size > 10 * 1024 * 1024) {
+          setErrors(prev => ({ ...prev, conceptNote: 'File too large. Max size is 10MB.' }));
+          return;
+        }
+        setErrors(prev => ({ ...prev, conceptNote: undefined }));
+        setFormData({ ...formData, [name]: file });
+      } else if (name === 'animationsVideos') {
+        const file = files[0];
+        if (file && file.type !== 'video/mp4') {
+          setErrors(prev => ({ ...prev, animationsVideos: 'Invalid file type. Only MP4 allowed.' }));
+          return;
+        }
+        if (file && file.size > 500 * 1024 * 1024) {
+          setErrors(prev => ({ ...prev, animationsVideos: 'File too large. Max size is 500MB.' }));
+          return;
+        }
+        setErrors(prev => ({ ...prev, animationsVideos: undefined }));
+        setFormData({ ...formData, [name]: file });
+      } else {
+        setFormData({ ...formData, [name]: files[0] });
+      }
     } else if (type === 'checkbox') {
       setFormData(prevData => {
         const updatedAreas = checked
@@ -170,46 +198,49 @@ const ExhibitorRegistrationForm = ({ onBackClick, onRegistrationSuccess }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const isValid = validate();
-    
-    if (isValid) {
-      setLoading(true);
-      setError(null);
+    if (!isValid) return;
+    setLoading(true);
+    setError(null);
+    try {
+      const submissionData = new FormData();
+      submissionData.append('organizationName', formData.organizationName);
+      submissionData.append('region', formData.region);
+      submissionData.append('contactPersonName', formData.contactPersonName);
+      submissionData.append('contactPhoneNumber', formData.contactPhoneNumber);
+      submissionData.append('optionalPhoneNumber', formData.optionalPhoneNumber);
+      submissionData.append('contactEmail', formData.contactEmail);
+      submissionData.append('thematicAreas', JSON.stringify(formData.thematicAreas));
+      submissionData.append('conceptNote', formData.conceptNote);
+      submissionData.append('animationsVideos', formData.animationsVideos);
+
+      let response;
       try {
-        const submissionData = new FormData();
-        // Append all text fields
-        submissionData.append('organizationName', formData.organizationName);
-        submissionData.append('region', formData.region);
-        submissionData.append('contactPersonName', formData.contactPersonName);
-        submissionData.append('contactPhoneNumber', formData.contactPhoneNumber);
-        submissionData.append('optionalPhoneNumber', formData.optionalPhoneNumber);
-        submissionData.append('contactEmail', formData.contactEmail);
-        
-        // Append thematic areas (as a JSON string)
-        submissionData.append('thematicAreas', JSON.stringify(formData.thematicAreas));
-        
-        // Append file data
-        submissionData.append('conceptNote', formData.conceptNote);
-        submissionData.append('animationsVideos', formData.animationsVideos);
-        
-        // Send the data to the backend
-        const response = await fetch(`${BACKEND_URL}/register`, {
-            method: 'POST',
-            body: submissionData,
+        response = await fetch(`${BACKEND_URL}/register_exhibitor`, {
+          method: 'POST',
+          body: submissionData,
         });
-
-        if (!response.ok) {
-            const errorData = await response.json();
-            throw new Error(errorData.message || `Server error: ${response.statusText}`);
-        }
-
-        console.log('Form Submitted Successfully!');
-        onRegistrationSuccess();
-      } catch (e) {
-        console.error('Error submitting form:', e);
-        setError(`An error occurred during registration: ${e.message}`);
-      } finally {
+      } catch (networkError) {
+        setError('Network error: Unable to reach the server. Please check your connection and try again.');
         setLoading(false);
+        return;
       }
+
+      if (!response.ok) {
+        let errorMsg = `Server error: ${response.statusText}`;
+        try {
+          const errorData = await response.json();
+          errorMsg = errorData.message || errorMsg;
+        } catch {}
+        setError(errorMsg);
+        setLoading(false);
+        return;
+      }
+
+      onRegistrationSuccess();
+    } catch (e) {
+      setError(`An unexpected error occurred: ${e.message}`);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -399,7 +430,7 @@ const ExhibitorRegistrationForm = ({ onBackClick, onRegistrationSuccess }) => {
               Animations/Videos Attachment <span className="text-red-400">*</span>
             </label>
             <p className="text-xs text-gray-300 mb-2">
-              Accepted file type: MP4 (1080p). Max size: 50MB.
+              Accepted file type: MP4 (1080p). Max size: 500MB.
             </p>
             <input
               type="file"
@@ -535,7 +566,7 @@ const ExhibitorList = ({ onBackClick }) => {
 
 
 // --- About Component ---
-const About = ({ onRegisterClick, onViewExhibitorsClick }) => {
+const About = ({ onRegisterClick }) => {
   const highlights = [{
     icon: (
       <Icon
@@ -782,13 +813,7 @@ const About = ({ onRegisterClick, onViewExhibitorsClick }) => {
           className="text-center mb-16"
         >
           <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
-            About the{" "}
-            <span
-              onClick={onViewExhibitorsClick}
-              className="cursor-pointer underline decoration-wavy text-cyan-300 hover:text-cyan-500 transition-colors"
-            >
-              ARM
-            </span>
+            About the ARM
           </h2>
           <div className="max-w-4xl mx-auto">
               <p className="text-lg text-white mb-2 leading-relaxed">
@@ -881,7 +906,17 @@ const App = () => {
 
   return (
     <div className="relative min-h-screen">
-      <About onRegisterClick={handleRegisterClick} onViewExhibitorsClick={handleViewExhibitorsClick} />
+      {/* New Navigation Bar with "View Exhibitors" Button */}
+      <nav className="fixed top-0 left-0 right-0 z-40 bg-[#015aa4] bg-opacity-80 backdrop-blur-md p-4 flex justify-between items-center text-white shadow-lg">
+          <div className="text-xl font-bold">ARM</div>
+          <button
+              onClick={handleViewExhibitorsClick}
+              className="relative overflow-hidden bg-purple-600 text-white px-4 py-2 rounded-full text-sm font-semibold shadow-lg hover:bg-purple-700 transition-all duration-300 group"
+          >
+              View Exhibitors
+          </button>
+      </nav>
+      <About onRegisterClick={handleRegisterClick} />
 
       <AnimatePresence>
         {isPanelOpen && (
