@@ -25,49 +25,49 @@ const committeeMembers = [
   },
   {
     name: 'Dr. Muluken Argaw',
-    position: 'CEO',
+    position: 'Executive Officer',
     department: 'Strategic Affairs/SAO',
     role: 'Leads the strategic planning and execution of key health programs and partnerships.',
     imageUrl: directImageUrls[4]
   },
   {
     name: 'Dr. Tegene Regassa',
-    position: 'CEO',
+    position: 'Executive Officer',
     department: 'Public Relations - MoH',
     role: 'Manages public communication and media relations to enhance public health awareness and transparency.',
     imageUrl: directImageUrls[1]
   },
   {
     name: 'Mr. Solomon Ejigu',
-    position: 'LEO',
-    department: 'Health Finance System - MoH',
-    role: 'Oversees the financial management and investment in health systems to ensure sustainable funding.',
+    position: 'Executive Officer',
+    department: 'Finance  - MoH',
+    role: 'Oversees the financial management and investment in health systems to ensure sustainable financing.',
     imageUrl: directImageUrls[5]
   },
   {
     name: 'Mr. Eskinder Lakew',
-    position: 'CEO',
+    position: 'Executive Officer',
     department: 'Basic Service Executive - MoH',
     role: 'Directs the implementation and expansion of essential health services across the country.',
     imageUrl: directImageUrls[3]
   },
   {
     name: 'Mr. Gemechis Melkamu',
-    position: 'LEO',
+    position: 'Lead Executive Officer',
     department: 'Digital Health - MoH',
     role: 'Leads the development and integration of digital health solutions to modernize healthcare delivery.',
     imageUrl: directImageUrls[2]
   },
   {
     name: 'Mr. Yehenew Berhane',
-    position: 'CEO',
+    position: 'Executive Officer',
     department: 'Procurement Executive. - MoH',
     role: 'Manages the procurement and supply chain for medical equipment, pharmaceuticals, and other essential goods.',
     imageUrl: directImageUrls[6]
   },
   {
     name: 'Mr. Assegid Samuel',
-    position: 'LEO',
+    position: 'Lead Executive Officer',
     department: 'Human Resources For Health Development and Improvement - MoH',
     role: 'Manages the Human Resources For Health Development and Improvement of the Health Sector.',
     imageUrl: directImageUrls[10]
@@ -75,13 +75,13 @@ const committeeMembers = [
   {
     name: 'Mrs. Rahima Skihur',
     position: 'Senior Advisor',
-    department: 'Misinters\' Office - MoH',
+    department: 'Misinter\'s Office - MoH',
     role: 'Provides expert counsel on key policy decisions and strategic initiatives for the Minister\'s Office.',
     imageUrl: directImageUrls[8]
   },
   {
     name: 'Mr. Mesoud Mohammed ',
-    position: 'Lead',
+    position: 'Desk Head',
     department: 'Strategic Affairs - MoH',
     role: 'Leads critical projects within the Strategic Affairs Office, ensuring goals are met efficiently.',
     imageUrl: directImageUrls[9]

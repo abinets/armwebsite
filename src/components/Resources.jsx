@@ -11,14 +11,7 @@ const Resources = () => {
     { title: 'Fact Sheet Q1 2025', downloadLink: 'https://example.com/fact-sheet-q1-2025.pdf' },
     { title: 'Guideline Document A', downloadLink: 'https://example.com/guideline-a.pdf' },
     { title: 'Policy Brief 001', downloadLink: 'https://example.com/policy-001.pdf' },
-    { title: 'Research Paper Vol 1', downloadLink: 'https://example.com/research-v1.pdf' },
-    { title: 'Annual Report 2024', downloadLink: 'https://example.com/annual-report-2023.pdf' },
-    { title: 'Fact Sheet Q4 2024', downloadLink: 'https://example.com/fact-sheet-q4-2024.pdf' },
-    { title: 'Guideline Document B', downloadLink: 'https://example.com/guideline-b.pdf' },
-    { title: 'Policy Brief 002', downloadLink: 'https://example.com/policy-002.pdf' },
-    { title: 'Research Paper Vol 2', downloadLink: 'https://example.com/research-v2.pdf' },
-    { title: 'Annual Report 2024', downloadLink: 'https://example.com/annual-report-2022.pdf' },
-    { title: 'Fact Sheet Q3 2024', downloadLink: 'https://example.com/fact-sheet-q3-2024.pdf' },
+
      ];
 
   return (

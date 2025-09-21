@@ -603,15 +603,18 @@ const ExhibitorList = ({ onBackClick }) => {
 // --- About Component ---
 const About = ({ onRegisterClick }) => {
   const highlights = [{
+
     icon: (
       <Icon
-        d="M12 2a4 4 0 0 0-4 4v7a4 4 0 0 0 8 0V6a4 4 0 0 0-4-4zM6 13a6 6 0 0 0 12 0v-2h-2v2a4 4 0 0 1-8 0v-2H6v2zm6 11a7 7 0 0 1-7-7h2a5 5 0 0 0 10 0h2a7 7 0 0 1-7 7z"
+        d="M2 5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5zm2 0v14h16V5H4zm2 2v2h2v-2H6zm0 4v2h2v-2H6zm4-4v2h2v-2h-2zm0 4v2h2v-2h-2zm4-4v2h2v-2h-2zm0 4v2h2v-2h-2zm0 4v2h2v-2h-2zm-4 0v2h2v-2h-2zm-4 0v2h2v-2H6z"
         className="w-8 h-8 text-white"
       />
     ),
-    title: '20+ Sessions',
-    description: 'Reviewing annual health reports and engaging in collaborative panel discussions.'
-  }, {
+    title: '12+ Exhibitions Booths',
+    description: 'All regional and national-level exhibitors are participating and exhibiting their works at the event.'
+
+
+      }, {
     icon: (
       <Icon
         d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"
@@ -632,13 +635,14 @@ const About = ({ onRegisterClick }) => {
   }, {
     icon: (
       <Icon
-        d="M2 5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5zm2 0v14h16V5H4zm2 2v2h2v-2H6zm0 4v2h2v-2H6zm4-4v2h2v-2h-2zm0 4v2h2v-2h-2zm4-4v2h2v-2h-2zm0 4v2h2v-2h-2zm0 4v2h2v-2h-2zm-4 0v2h2v-2h-2zm-4 0v2h2v-2H6z"
+        d="M12 2a4 4 0 0 0-4 4v7a4 4 0 0 0 8 0V6a4 4 0 0 0-4-4zM6 13a6 6 0 0 0 12 0v-2h-2v2a4 4 0 0 1-8 0v-2H6v2zm6 11a7 7 0 0 1-7-7h2a5 5 0 0 0 10 0h2a7 7 0 0 1-7 7z"
         className="w-8 h-8 text-white"
       />
     ),
-    title: '12+ Exhibitions Booths',
-    description: 'All regional and national-level exhibitors are participating and exhibiting their works at the event.'
-  }];
+    title: '20+ Sessions',
+    description: 'Reviewing annual health reports and engaging in collaborative panel discussions.'
+
+      }];
 
   const [timeLeft, setTimeLeft] = useState({
     days: 0,
