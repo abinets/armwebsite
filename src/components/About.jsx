@@ -226,12 +226,15 @@ const ExhibitorRegistrationForm = ({ onBackClick, onRegistrationSuccess }) => {
         return;
       }
 
+
+
       if (!response.ok) {
         let errorMsg = `Server error: ${response.statusText}`;
         try {
           const errorData = await response.json();
           errorMsg = errorData.message || errorMsg;
-        } catch(e) { }
+        } catch(e)
+         { }
         setError(errorMsg);
         setLoading(false);
         return;
