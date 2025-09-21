@@ -233,13 +233,13 @@ const ExhibitorRegistrationForm = ({ onBackClick, onRegistrationSuccess }) => {
         try {
           const errorData = await response.json();
           errorMsg = errorData.message || errorMsg;
-        } catch(e)
-         { }
+        } catch (e) {
+          // no-op
+        }
         setError(errorMsg);
         setLoading(false);
         return;
       }
-
       onRegistrationSuccess();
     } catch (e) {
       setError(`An unexpected error occurred: ${e.message}`);
