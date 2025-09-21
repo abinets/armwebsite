@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-
+import ConceptNote from './ConceptNote';
 // --- IMPORTANT: Define your backend server URL here ---
-const BACKEND_URL = 'http://localhost:3001';
+const BACKEND_URL = 'https://arm.moh.gov.et';
 
 // Self-contained Icon component using SVG for a single-file solution
 const Icon = ({ d, className }) => (
@@ -111,7 +111,8 @@ const ExhibitorRegistrationForm = ({ onBackClick, onRegistrationSuccess }) => {
     conceptNote: null,
     animationsVideos: null,
   });
-  
+
+  const [showConceptNote, setShowConceptNote] = useState(false);
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -135,7 +136,35 @@ const ExhibitorRegistrationForm = ({ onBackClick, onRegistrationSuccess }) => {
   const handleChange = (e) => {
     const { name, value, type, files, checked } = e.target;
     if (type === 'file') {
-      setFormData({ ...formData, [name]: files[0] });
+      // File type and size validation
+      if (name === 'conceptNote') {
+        const file = files[0];
+        const allowedTypes = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
+        if (file && !allowedTypes.includes(file.type)) {
+          setErrors(prev => ({ ...prev, conceptNote: 'Invalid file type. Only PDF, DOC, DOCX allowed.' }));
+          return;
+        }
+        if (file && file.size > 10 * 1024 * 1024) {
+          setErrors(prev => ({ ...prev, conceptNote: 'File too large. Max size is 10MB.' }));
+          return;
+        }
+        setErrors(prev => ({ ...prev, conceptNote: undefined }));
+        setFormData({ ...formData, [name]: file });
+      } else if (name === 'animationsVideos') {
+        const file = files[0];
+        if (file && file.type !== 'video/mp4') {
+          setErrors(prev => ({ ...prev, animationsVideos: 'Invalid file type. Only MP4 allowed.' }));
+          return;
+        }
+        if (file && file.size > 500 * 1024 * 1024) {
+          setErrors(prev => ({ ...prev, animationsVideos: 'File too large. Max size is 500MB.' }));
+          return;
+        }
+        setErrors(prev => ({ ...prev, animationsVideos: undefined }));
+        setFormData({ ...formData, [name]: file });
+      } else {
+        setFormData({ ...formData, [name]: files[0] });
+      }
     } else if (type === 'checkbox') {
       setFormData(prevData => {
         const updatedAreas = checked
@@ -162,7 +191,7 @@ const ExhibitorRegistrationForm = ({ onBackClick, onRegistrationSuccess }) => {
     if (formData.thematicAreas.length === 0) newErrors.thematicAreas = 'At least one Thematic Area must be selected.';
     if (!formData.conceptNote) newErrors.conceptNote = 'Concept Note is required.';
     if (!formData.animationsVideos) newErrors.animationsVideos = 'Animations/Videos attachment is required.';
-    
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -170,51 +199,61 @@ const ExhibitorRegistrationForm = ({ onBackClick, onRegistrationSuccess }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const isValid = validate();
-    
-    if (isValid) {
-      setLoading(true);
-      setError(null);
+    if (!isValid) return;
+    setLoading(true);
+    setError(null);
+    try {
+      const submissionData = new FormData();
+      submissionData.append('organizationName', formData.organizationName);
+      submissionData.append('region', formData.region);
+      submissionData.append('contactPersonName', formData.contactPersonName);
+      submissionData.append('contactPhoneNumber', formData.contactPhoneNumber);
+      submissionData.append('optionalPhoneNumber', formData.optionalPhoneNumber);
+      submissionData.append('contactEmail', formData.contactEmail);
+      submissionData.append('thematicAreas', JSON.stringify(formData.thematicAreas));
+      submissionData.append('conceptNote', formData.conceptNote);
+      submissionData.append('animationsVideos', formData.animationsVideos);
+
+      let response;
       try {
-        const submissionData = new FormData();
-        // Append all text fields
-        submissionData.append('organizationName', formData.organizationName);
-        submissionData.append('region', formData.region);
-        submissionData.append('contactPersonName', formData.contactPersonName);
-        submissionData.append('contactPhoneNumber', formData.contactPhoneNumber);
-        submissionData.append('optionalPhoneNumber', formData.optionalPhoneNumber);
-        submissionData.append('contactEmail', formData.contactEmail);
-        
-        // Append thematic areas (as a JSON string)
-        submissionData.append('thematicAreas', JSON.stringify(formData.thematicAreas));
-        
-        // Append file data
-        submissionData.append('conceptNote', formData.conceptNote);
-        submissionData.append('animationsVideos', formData.animationsVideos);
-        
-        // Send the data to the backend
-        const response = await fetch(`${BACKEND_URL}/register`, {
-            method: 'POST',
-            body: submissionData,
+        response = await fetch(`${BACKEND_URL}/register_exhibitor`, {
+          method: 'POST',
+          body: submissionData,
         });
-
-        if (!response.ok) {
-            const errorData = await response.json();
-            throw new Error(errorData.message || `Server error: ${response.statusText}`);
-        }
-
-        console.log('Form Submitted Successfully!');
-        onRegistrationSuccess();
-      } catch (e) {
-        console.error('Error submitting form:', e);
-        setError(`An error occurred during registration: ${e.message}`);
-      } finally {
+      } catch (networkError) {
+        setError('Network error: Unable to reach the server. Please check your connection and try again.');
         setLoading(false);
+        return;
       }
+
+      if (!response.ok) {
+        let errorMsg = `Server error: ${response.statusText}`;
+        try {
+          const errorData = await response.json();
+          errorMsg = errorData.message || errorMsg;
+        } catch { }
+        setError(errorMsg);
+        setLoading(false);
+        return;
+      }
+
+      onRegistrationSuccess();
+    } catch (e) {
+      setError(`An unexpected error occurred: ${e.message}`);
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
     <div className="bg-[#015aa4]/80 p-8 md:p-12 rounded-xl shadow-lg relative max-h-[90vh] overflow-y-auto w-full max-w-2xl text-white">
+      <button
+        onClick={onBackClick}
+        className="absolute top-4 right-4 text-white hover:text-red-400 text-2xl font-bold px-4 py-2 rounded-full focus:outline-none"
+        aria-label="Close Registration Form"
+      >
+        &times;
+      </button>
       <div className="absolute top-4 right-4">
         <button onClick={onBackClick} className="text-white hover:text-gray-300 transition-colors">
           <Icon d="M6 18L18 6M6 6l12 12" className="w-8 h-8" />
@@ -223,6 +262,20 @@ const ExhibitorRegistrationForm = ({ onBackClick, onRegistrationSuccess }) => {
       <h2 className="text-3xl md:text-4xl font-bold text-white mb-2">
         Exhibitor Registration
       </h2>
+      <button
+        type="button"
+        className="ml-4 px-4 py-2 bg-blue-600 text-white rounded-full text-sm font-semibold hover:bg-blue-700 transition"
+        onClick={() => setShowConceptNote(true)}
+      >
+        View Concept Note
+      </button>
+      {showConceptNote && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-60">
+          <div className="bg-white rounded-xl shadow-2xl max-w-3xl w-full p-6 relative overflow-y-auto max-h-[90vh]">
+            <ConceptNote onClose={() => setShowConceptNote(false)} />
+          </div>
+        </div>
+      )}
       <p className="text-white mb-8">
         Please fill out the form below to register your organization as an exhibitor.
       </p>
@@ -250,7 +303,7 @@ const ExhibitorRegistrationForm = ({ onBackClick, onRegistrationSuccess }) => {
           />
           {errors.organizationName && <p className="text-red-400 text-sm mt-1">{errors.organizationName}</p>}
         </div>
-        
+
         {/* Region */}
         <div>
           <label htmlFor="region" className="block text-sm font-semibold text-white mb-1">
@@ -288,7 +341,7 @@ const ExhibitorRegistrationForm = ({ onBackClick, onRegistrationSuccess }) => {
           />
           {errors.contactPersonName && <p className="text-red-400 text-sm mt-1">{errors.contactPersonName}</p>}
         </div>
-        
+
         {/* Contact Phone Numbers */}
         <div>
           <label htmlFor="contactPhoneNumber" className="block text-sm font-semibold text-white mb-1">
@@ -323,7 +376,7 @@ const ExhibitorRegistrationForm = ({ onBackClick, onRegistrationSuccess }) => {
             className="block w-full rounded-md bg-white/10 text-white border border-white/20 shadow-sm p-3"
           />
         </div>
-        
+
         {/* Contact Email */}
         <div>
           <label htmlFor="contactEmail" className="block text-sm font-semibold text-white mb-1">
@@ -341,7 +394,7 @@ const ExhibitorRegistrationForm = ({ onBackClick, onRegistrationSuccess }) => {
           />
           {errors.contactEmail && <p className="text-red-400 text-sm mt-1">{errors.contactEmail}</p>}
         </div>
-        
+
         {/* Thematic Area Checkboxes */}
         <div>
           <label className="block text-sm font-semibold text-white mb-1">
@@ -399,7 +452,7 @@ const ExhibitorRegistrationForm = ({ onBackClick, onRegistrationSuccess }) => {
               Animations/Videos Attachment <span className="text-red-400">*</span>
             </label>
             <p className="text-xs text-gray-300 mb-2">
-              Accepted file type: MP4 (1080p). Max size: 50MB.
+              Accepted file type: MP4 (1080p). Max size: 500MB.
             </p>
             <input
               type="file"
@@ -419,7 +472,7 @@ const ExhibitorRegistrationForm = ({ onBackClick, onRegistrationSuccess }) => {
             {errors.animationsVideos && <p className="text-red-400 text-sm mt-1">{errors.animationsVideos}</p>}
           </div>
         </div>
-        
+
         <button
           type="submit"
           disabled={loading}
@@ -427,110 +480,120 @@ const ExhibitorRegistrationForm = ({ onBackClick, onRegistrationSuccess }) => {
         >
           {loading ? 'Submitting...' : 'Submit Registration'}
         </button>
+
       </form>
+      {/* Bottom right X close button */}
+      <button
+        onClick={onBackClick}
+        className="fixed bottom-8 right-8 text-white hover:text-red-400 text-2xl font-bold px-4 py-2 rounded-full focus:outline-none z-50"
+        aria-label="Close Registration Form"
+        style={{ pointerEvents: 'auto' }}
+      >
+        &times;
+      </button>
     </div>
   );
 };
 
 // --- Exhibitor List Component (Corrected) ---
 const ExhibitorList = ({ onBackClick }) => {
-    const [exhibitors, setExhibitors] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
+  const [exhibitors, setExhibitors] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-    // Corrected JSON data with escaped quotes
-    const rawData = '[{"organization_name":"HABTech","region":"Amhara","contact_person_name":"Abinet Seife Zergaw","contact_person_phone_number":"+251913827238","contact_person_email":"abnios@gmail.com","selected_thematic_areas":"[\\"Digital Health Innovation\\",\\"Health Finance System\\",\\"Health Service Delivery\\"]","concept_note_path":"uploads/conceptNote-1758384944645-169585719.pdf","animations_videos_path":"uploads/animationsVideos-1758384944653-709285271.mp4"},{"organization_name":"Pers","region":"Harari","contact_person_name":"Abinet Zergaw","contact_person_phone_number":"+251913827238","contact_person_email":"abnios.se@gmail.com","selected_thematic_areas":"[\\"Digital Health Innovation\\",\\"Health Service Delivery\\",\\"Health Finance System\\",\\"Pharmaceutical and Medical Supply\\"]","concept_note_path":"uploads/conceptNote-1758385411442-682603398.pdf","animations_videos_path":"uploads/animationsVideos-1758385411452-112201978.mp4"}]';
+  // Corrected JSON data with escaped quotes
+  const rawData = '[{"organization_name":"HABTech","region":"Amhara","contact_person_name":"Abinet Seife Zergaw","contact_person_phone_number":"+251913827238","contact_person_email":"abnios@gmail.com","selected_thematic_areas":"[\\"Digital Health Innovation\\",\\"Health Finance System\\",\\"Health Service Delivery\\"]","concept_note_path":"uploads/conceptNote-1758384944645-169585719.pdf","animations_videos_path":"uploads/animationsVideos-1758384944653-709285271.mp4"},{"organization_name":"Pers","region":"Harari","contact_person_name":"Abinet Zergaw","contact_person_phone_number":"+251913827238","contact_person_email":"abnios.se@gmail.com","selected_thematic_areas":"[\\"Digital Health Innovation\\",\\"Health Service Delivery\\",\\"Health Finance System\\",\\"Pharmaceutical and Medical Supply\\"]","concept_note_path":"uploads/conceptNote-1758385411442-682603398.pdf","animations_videos_path":"uploads/animationsVideos-1758385411452-112201978.mp4"}]';
 
-    useEffect(() => {
-        try {
-            const data = JSON.parse(rawData);
-            setExhibitors(data);
-            setLoading(false);
-        } catch (err) {
-            setError(err.message);
-            setLoading(false);
-        }
-    }, []);
+  useEffect(() => {
+    try {
+      const data = JSON.parse(rawData);
+      setExhibitors(data);
+      setLoading(false);
+    } catch (err) {
+      setError(err.message);
+      setLoading(false);
+    }
+  }, []);
 
-    return (
-        <div className="bg-[#015aa4]/80 p-8 md:p-12 rounded-xl shadow-lg relative max-h-[90vh] overflow-y-auto w-full max-w-4xl text-white">
-            <div className="absolute top-4 right-4">
-                <button onClick={onBackClick} className="text-white hover:text-gray-300 transition-colors">
-                    <Icon d="M6 18L18 6M6 6l12 12" className="w-8 h-8" />
-                </button>
-            </div>
-            <h2 className="text-3xl md:text-4xl font-bold text-white mb-6 text-center">
-                Registered Exhibitors
-            </h2>
+  return (
+    <div className="bg-[#015aa4]/80 p-8 md:p-12 rounded-xl shadow-lg relative max-h-[90vh] overflow-y-auto w-full max-w-4xl text-white">
+      <div className="absolute top-4 right-4">
+        <button onClick={onBackClick} className="text-white hover:text-gray-300 transition-colors">
+          <Icon d="M6 18L18 6M6 6l12 12" className="w-8 h-8" />
+        </button>
+      </div>
+      <h2 className="text-3xl md:text-4xl font-bold text-white mb-6 text-center">
+        Registered Exhibitors
+      </h2>
 
-            {loading && <p className="text-center text-lg">Loading exhibitor list...</p>}
-            {error && <p className="text-center text-red-400 text-lg">Error: {error}</p>}
-            
-            {!loading && !error && (
-                <div className="space-y-6">
-                    {exhibitors.length > 0 ? (
-                        exhibitors.map((exhibitor, index) => (
-                            <motion.div
-                                key={index}
-                                initial={{ opacity: 0, y: 20 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                transition={{ duration: 0.5, delay: index * 0.1 }}
-                                className="bg-white/10 backdrop-blur-md rounded-lg p-6 shadow-xl border border-white/20"
-                            >
-                                <h3 className="text-xl md:text-2xl font-bold mb-2">
-                                    {exhibitor.organization_name}
-                                </h3>
-                                <div className="text-sm space-y-1">
-                                    <p><strong>Region:</strong> {exhibitor.region}</p>
-                                    <p><strong>Contact Person:</strong> {exhibitor.contact_person_name}</p>
-                                    <p><strong>Email:</strong> {exhibitor.contact_person_email}</p>
-                                    <p><strong>Phone:</strong> {exhibitor.contact_person_phone_number}</p>
-                                    {/* Correctly parse the thematicAreas string before using .map() */}
-                                    <p className="mt-2">
-                                        <strong>Thematic Areas:</strong> {exhibitor.selected_thematic_areas && JSON.parse(exhibitor.selected_thematic_areas).join(', ')}
-                                    </p>
+      {loading && <p className="text-center text-lg">Loading exhibitor list...</p>}
+      {error && <p className="text-center text-red-400 text-lg">Error: {error}</p>}
 
-                                    {/* Attachment Links Section - New addition */}
-                                    <div className="mt-4 pt-4 border-t border-white/20 flex flex-wrap gap-2">
-                                      {exhibitor.concept_note_path && (
-                                        <a
-                                          href={`${BACKEND_URL}/${exhibitor.concept_note_path}`}
-                                          target="_blank"
-                                          rel="noopener noreferrer"
-                                          className="flex items-center space-x-2 px-4 py-2 bg-blue-600 rounded-full text-white font-semibold text-sm hover:bg-blue-700 transition-colors"
-                                        >
-                                          <Icon
-                                            d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"
-                                            className="w-4 h-4"
-                                          />
-                                          <span>Concept Note</span>
-                                        </a>
-                                      )}
-                                      {exhibitor.animations_videos_path && (
-                                        <a
-                                          href={`${BACKEND_URL}/${exhibitor.animations_videos_path}`}
-                                          target="_blank"
-                                          rel="noopener noreferrer"
-                                          className="flex items-center space-x-2 px-4 py-2 bg-purple-600 rounded-full text-white font-semibold text-sm hover:bg-purple-700 transition-colors"
-                                        >
-                                          <Icon
-                                            d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h.01M10 18h.01M15 18h.01M5 14h.01M10 14h.01M15 14h.01"
-                                            className="w-4 h-4"
-                                          />
-                                          <span>Animations/Videos</span>
-                                        </a>
-                                      )}
-                                    </div>
-                                </div>
-                            </motion.div>
-                        ))
-                    ) : (
-                        <p className="text-center text-lg">No exhibitors have registered yet.</p>
+      {!loading && !error && (
+        <div className="space-y-6">
+          {exhibitors.length > 0 ? (
+            exhibitors.map((exhibitor, index) => (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: index * 0.1 }}
+                className="bg-white/10 backdrop-blur-md rounded-lg p-6 shadow-xl border border-white/20"
+              >
+                <h3 className="text-xl md:text-2xl font-bold mb-2">
+                  {exhibitor.organization_name}
+                </h3>
+                <div className="text-sm space-y-1">
+                  <p><strong>Region:</strong> {exhibitor.region}</p>
+                  <p><strong>Contact Person:</strong> {exhibitor.contact_person_name}</p>
+                  <p><strong>Email:</strong> {exhibitor.contact_person_email}</p>
+                  <p><strong>Phone:</strong> {exhibitor.contact_person_phone_number}</p>
+                  {/* Correctly parse the thematicAreas string before using .map() */}
+                  <p className="mt-2">
+                    <strong>Thematic Areas:</strong> {exhibitor.selected_thematic_areas && JSON.parse(exhibitor.selected_thematic_areas).join(', ')}
+                  </p>
+
+                  {/* Attachment Links Section - New addition */}
+                  <div className="mt-4 pt-4 border-t border-white/20 flex flex-wrap gap-2">
+                    {exhibitor.concept_note_path && (
+                      <a
+                        href={`${BACKEND_URL}/${exhibitor.concept_note_path}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center space-x-2 px-4 py-2 bg-blue-600 rounded-full text-white font-semibold text-sm hover:bg-blue-700 transition-colors"
+                      >
+                        <Icon
+                          d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"
+                          className="w-4 h-4"
+                        />
+                        <span>Concept Note</span>
+                      </a>
                     )}
+                    {exhibitor.animations_videos_path && (
+                      <a
+                        href={`${BACKEND_URL}/${exhibitor.animations_videos_path}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center space-x-2 px-4 py-2 bg-purple-600 rounded-full text-white font-semibold text-sm hover:bg-purple-700 transition-colors"
+                      >
+                        <Icon
+                          d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h.01M10 18h.01M15 18h.01M5 14h.01M10 14h.01M15 14h.01"
+                          className="w-4 h-4"
+                        />
+                        <span>Animations/Videos</span>
+                      </a>
+                    )}
+                  </div>
                 </div>
-            )}
+              </motion.div>
+            ))
+          ) : (
+            <p className="text-center text-lg">No exhibitors have registered yet.</p>
+          )}
         </div>
-    );
+      )}
+    </div>
+  );
 };
 
 
@@ -585,7 +648,7 @@ const About = ({ onRegisterClick }) => {
 
   useEffect(() => {
     // Set target date to October 22, 2025 at midnight EAT
-    const targetDate = new Date('2025-10-22T00:00:00+03:00'); 
+    const targetDate = new Date('2025-10-22T00:00:00+03:00');
 
     const timer = setInterval(() => {
       const now = new Date();
@@ -646,7 +709,7 @@ const About = ({ onRegisterClick }) => {
                   </motion.span>
                 ))}
               </motion.span>
-              <motion.span 
+              <motion.span
                 className="text-base md:text-lg font-semibold text-blue-100 uppercase mt-1"
                 variants={containerVariantsAmharic}
                 initial="hidden"
@@ -659,7 +722,7 @@ const About = ({ onRegisterClick }) => {
                 ))}
               </motion.span>
             </div>
-            
+
             <div className="text-3xl md:text-5xl font-extrabold text-white">:</div>
 
             {/* Hours */}
@@ -676,7 +739,7 @@ const About = ({ onRegisterClick }) => {
                   </motion.span>
                 ))}
               </motion.span>
-              <motion.span 
+              <motion.span
                 className="text-base md:text-lg font-semibold text-blue-100 uppercase mt-1"
                 variants={containerVariantsAmharic}
                 initial="hidden"
@@ -689,7 +752,7 @@ const About = ({ onRegisterClick }) => {
                 ))}
               </motion.span>
             </div>
-            
+
             <div className="text-3xl md:text-5xl font-extrabold text-white">:</div>
 
             {/* Minutes */}
@@ -706,7 +769,7 @@ const About = ({ onRegisterClick }) => {
                   </motion.span>
                 ))}
               </motion.span>
-              <motion.span 
+              <motion.span
                 className="text-base md:text-lg font-semibold text-blue-100 uppercase mt-1"
                 variants={containerVariantsAmharic}
                 initial="hidden"
@@ -719,7 +782,7 @@ const About = ({ onRegisterClick }) => {
                 ))}
               </motion.span>
             </div>
-            
+
             {/* Display seconds on larger screens only */}
             {!isMobile && (
               <>
@@ -737,7 +800,7 @@ const About = ({ onRegisterClick }) => {
                       </motion.span>
                     ))}
                   </motion.span>
-                  <motion.span 
+                  <motion.span
                     className="text-base md:text-lg font-semibold text-blue-100 uppercase mt-1"
                     variants={containerVariantsAmharic}
                     initial="hidden"
@@ -773,7 +836,7 @@ const About = ({ onRegisterClick }) => {
             </a>
           </motion.div>
         </div>
-        
+
         <motion.div
           initial={{ opacity: 0, y: 50 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -785,14 +848,14 @@ const About = ({ onRegisterClick }) => {
             About the ARM
           </h2>
           <div className="max-w-4xl mx-auto">
-              <p className="text-lg text-white mb-2 leading-relaxed">
-The Annual Review Meeting (ARM) of the Ethiopian Ministry of Health brings together stakeholders to review health sector performance, share best practices, and establish new priorities.
-<br/> <br/> The 27th ARM will focus on the theme <span  className="text-lg font-bold text-white leading-relaxed">ዘላቂ ኢንቨስትመንት እና ፈጠራ፤ ለጠንካራ የጤና ስርአት!</span> 
-             with the English translation </p> 
-              <p className="text-lg font-bold text-white leading-relaxed">
-                Driving Health Gains Through Sustainable Investments and Innovations
-               
-              </p>
+            <p className="text-lg text-white mb-2 leading-relaxed">
+              The Annual Review Meeting (ARM) of the Ethiopian Ministry of Health brings together stakeholders to review health sector performance, share best practices, and establish new priorities.
+              <br /> <br /> The 27th ARM will focus on the theme <span className="text-lg font-bold text-white leading-relaxed">ዘላቂ ኢንቨስትመንት እና ፈጠራ፤ ለጠንካራ የጤና ስርአት!</span>
+              with the English translation </p>
+            <p className="text-lg font-bold text-white leading-relaxed">
+              Driving Health Gains Through Sustainable Investments and Innovations
+
+            </p>
           </div>
         </motion.div>
 
@@ -876,15 +939,15 @@ const App = () => {
   return (
     <div className="relative min-h-screen">
       {/* New Navigation Bar with "View Exhibitors" Button */}
-      <nav className="fixed top-0 left-0 right-0 z-40 bg-[#015aa4] bg-opacity-80 backdrop-blur-md p-4 flex justify-between items-center text-white shadow-lg">
-          <div className="text-xl font-bold">ARM</div>
-          <button
-              onClick={handleViewExhibitorsClick}
-              className="relative overflow-hidden bg-purple-600 text-white px-4 py-2 rounded-full text-sm font-semibold shadow-lg hover:bg-purple-700 transition-all duration-300 group"
-          >
-              View Exhibitors
-          </button>
-      </nav>
+      {/* <nav className="fixed top-0 left-0 right-0 z-40 bg-[#015aa4] bg-opacity-80 backdrop-blur-md p-4 flex justify-between items-center text-white shadow-lg">
+        <div className="text-xl font-bold">ARM</div>
+        <button
+          onClick={handleViewExhibitorsClick}
+          className="relative overflow-hidden bg-purple-600 text-white px-4 py-2 rounded-full text-sm font-semibold shadow-lg hover:bg-purple-700 transition-all duration-300 group"
+        >
+          View Exhibitors
+        </button>
+      </nav> */}
       <About onRegisterClick={handleRegisterClick} />
 
       <AnimatePresence>

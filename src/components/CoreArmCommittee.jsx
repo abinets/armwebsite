@@ -24,14 +24,14 @@ const committeeMembers = [
     imageUrl: directImageUrls[0]
   },
   {
-    name: 'Dr. Muluken Balcha',
+    name: 'Dr. Muluken Argaw',
     position: 'CEO',
     department: 'Strategic Affairs/SAO',
     role: 'Leads the strategic planning and execution of key health programs and partnerships.',
     imageUrl: directImageUrls[4]
   },
   {
-    name: 'Dr. Tegene Assefa',
+    name: 'Dr. Tegene Regassa',
     position: 'CEO',
     department: 'Public Relations - MoH',
     role: 'Manages public communication and media relations to enhance public health awareness and transparency.',
@@ -93,7 +93,7 @@ const CoreArmCommittee = () => {
     <>
       <hr className="h-0.5 w-1/2 mx-auto border-none bg-[#015aa4] shadow-lg shadow-[#000000]" style={{ boxShadow: 'inset 0 1px 2px rgba(0, 0, 0, 0.4), inset 0 -1px 2px rgba(0, 0, 0, 0.4)' }} />
 
-      <section id="core-arm-committee" className="py-20 bg-gradient-to-br from-[#015aa4] to-[#013c71]" style={{ scrollMarginTop: '80px' }}>
+      <section id="corearm-committee" className="py-20 bg-gradient-to-br from-[#015aa4] to-[#013c71]" style={{ scrollMarginTop: '80px' }}>
         <div className="container mx-auto px-6 lg:px-12 text-center relative z-10">
           <div className="mb-16">
             <h2 className="text-5xl md:text-6xl font-extrabold text-white mb-6 tracking-tight leading-tight">
@@ -130,7 +130,6 @@ const CoreArmCommittee = () => {
                   <span className="text-gray-400 font-normal">{member.department}</span>
                 </p>
 
-                <p className="text-base text-gray-200 mt-4 text-center max-w-xs">{member.role}</p>
               </div>
             ))}
           </div>

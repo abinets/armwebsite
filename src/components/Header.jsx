@@ -25,7 +25,7 @@ const Header = () => {
     { name: 'Itinerary', href: '#visits' },
     { name: 'Resources', href: '#Resources' },
     { name: 'Awardees', href: '#awardees' },
-    { name: 'Committee', href: '#core-arm-committee' },
+    { name: 'Committee', href: '#corearm-committee' },
     { name: 'Online', href: '#online-event' },
     { name: 'Contact', href: '#contact' }
   ];
@@ -33,11 +33,29 @@ const Header = () => {
   const scrollToSection = (href) => {
     const element = document.querySelector(href);
     if (element) {
-      const headerHeight = 80;
-      const elementPosition = element.offsetTop - headerHeight;
-      window.scrollTo({
-        top: elementPosition,
-        behavior: 'smooth'
+      // Find all images within the target element
+      const images = element.querySelectorAll('img');
+
+      // Create a promise for each image's load event
+      const imagePromises = Array.from(images).map(img => {
+        return new Promise((resolve) => {
+          if (img.complete) {
+            resolve();
+          } else {
+            img.onload = () => resolve();
+            img.onerror = () => resolve(); // Resolve even on error to not block the scroll
+          }
+        });
+      });
+
+      // Wait for all images to load before executing the scroll
+      Promise.all(imagePromises).then(() => {
+        const headerHeight = 80;
+        const elementPosition = element.offsetTop - headerHeight;
+        window.scrollTo({
+          top: elementPosition,
+          behavior: 'smooth'
+        });
       });
     }
     setIsMobileMenuOpen(false);
@@ -76,17 +94,17 @@ const Header = () => {
       initial={{ y: -100 }}
       animate={{ y: 0 }}
       className={`fixed w-full z-50 transition-all duration-300 ${
-        isScrolled ? 'bg-white/95 backdrop-blur-md shadow-lg' : 'bg-transparent'
+        isScrolled ? 'bg-[#015aa4] shadow-lg' : 'bg-transparent'
       }`}
       style={{ height: '80px' }}
     >
       <div className="container mx-auto px-4 h-full flex items-center">
         <div className="flex items-center justify-between w-full">
           {/* Mobile menu button is now on the left */}
-          <div className="flex items-center space-x-2"> {/* New flex container for the menu and text */}
+          <div className="flex items-center space-x-2">
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className={`md:hidden ${isScrolled ? 'text-gray-700' : 'text-white'}`}
+              className={`md:hidden ${isScrolled ? 'text-white' : 'text-white'}`}
             >
               <SafeIcon icon={isMobileMenuOpen ? FiX : FiMenu} className="w-6 h-6" />
             </button>
@@ -104,20 +122,20 @@ const Header = () => {
               </div>
               {/* Conditional rendering for mobile and desktop views */}
               <div className="hidden md:block">
-                <h1 className={`font-bold text-xl ${isScrolled ? 'text-blue-900' : 'text-white'}`}>
-                 Ministry of Health, Ethiopia
+                <h1 className={`font-bold text-xl ${isScrolled ? 'text-white' : 'text-white'}`}>
+                  Ministry of Health, Ethiopia
                 </h1>
-                <p className={`text-sm ${isScrolled ? 'text-gray-600' : 'text-blue-100'}`}>
+                <p className={`text-sm ${isScrolled ? 'text-blue-100' : 'text-blue-100'}`}>
                   2025
                 </p>
               </div>
               {/* Mobile-specific layout: breaks the title into two lines and reduces font size */}
               <div className="block md:hidden">
                 <div className="flex flex-col ml-1">
-                  <h1 className={`font-bold text-sm leading-tight ${isScrolled ? 'text-blue-900' : 'text-white'}`}>
+                  <h1 className={`font-bold text-sm leading-tight ${isScrolled ? 'text-white' : 'text-white'}`}>
                     Ministry of Health,
                   </h1>
-                  <p className={`text-xs leading-tight ${isScrolled ? 'text-gray-600' : 'text-blue-100'}`}>
+                  <p className={`text-xs leading-tight ${isScrolled ? 'text-blue-100' : 'text-blue-100'}`}>
                     Ethiopia | 2025
                   </p>
                 </div>
@@ -130,8 +148,8 @@ const Header = () => {
               <button
                 key={item.name}
                 onClick={() => scrollToSection(item.href)}
-                className={`transition-colors hover:text-blue-600 ${
-                  isScrolled ? 'text-gray-700' : 'text-white'
+                className={`transition-all duration-300 hover:font-bold ${
+                  isScrolled ? 'text-white' : 'text-white'
                 }`}
               >
                 <FlipText>{item.name}</FlipText>
@@ -160,7 +178,8 @@ const Header = () => {
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 1, height: 0 }}
-            className="absolute top-full left-0 right-0 w-[70%] bg-white rounded-lg shadow-lg p-4 mx-auto"
+            className={`absolute top-full left-0 right-0 w-[70%] rounded-lg shadow-lg p-4 mx-auto
+              ${isScrolled ? 'bg-white' : 'bg-white/50'}`}
           >
             {navItems.map((item) => (
               <button
