@@ -118,12 +118,11 @@ const ExhibitorRegistrationForm = ({ onBackClick, onRegistrationSuccess }) => {
   const [error, setError] = useState(null);
 
   const ethiopianRegions = [
-    'Ababa City Administration', 'Afar', 'Amhara', 'Benishangul-Gumuz', 'Central Ethiopia Nation, regional government', 'Dire Dawa City Administration' , 'Gambela', 'Harari', 'Oromia', 'Sidama', 'Somali', 'Southern Ethiopia', 'South West Ethiopia Region', 'Tigray'
+    'Addis Ababa City Administration', 'Afar Region', 'Amhara Region', 'Benishangul-Gumuz Region', 'Central Ethiopia Region', 'Dire Dawa City Administration' , 'Gambela Region', 'Harari Region', 'Oromia Region', 'Sidama Region', 'Somali Region', 'South Ethiopia Region', 'South West Ethiopia Region', 'Tigray Region'
   ];
 
   // Updated list of 8 thematic areas
   const thematicAreas = [
- 
     'Transforming Service Delivery through Redesigning Primary Health Care (PHC)',
     'Harnessing Innovation, Data, and Digital Transformation',
     'Advancing Sustainable Health System Financing',
