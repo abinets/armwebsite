@@ -118,19 +118,18 @@ const ExhibitorRegistrationForm = ({ onBackClick, onRegistrationSuccess }) => {
   const [error, setError] = useState(null);
 
   const ethiopianRegions = [
-    'Afar', 'Amhara', 'Benishangul-Gumuz', 'Gambela', 'Harari', 'Oromia', 'Sidama', 'Somali', 'Southern Nations, Nationalities, and Peoples\' Region', 'South West Ethiopia Peoples\' Region', 'Tigray'
+    'Ababa City Administration', 'Afar', 'Amhara', 'Benishangul-Gumuz', 'Central Ethiopia Nation, regional government', 'Dire Dawa City Administration' , 'Gambela', 'Harari', 'Oromia', 'Sidama', 'Somali', 'Southern Ethiopia', 'South West Ethiopia Region', 'Tigray'
   ];
 
   // Updated list of 8 thematic areas
   const thematicAreas = [
-    'Digital Health Innovation',
-    'Health Finance System',
-    'Health Service Delivery',
-    'Human Resources for Health',
-    'Pharmaceutical and Medical Supply',
-    'Public Health Emergency',
-    'Healthcare Technology Adoption',
-    'Maternal and Child Health'
+ 
+    'Transforming Service Delivery through Redesigning Primary Health Care (PHC)',
+    'Harnessing Innovation, Data, and Digital Transformation',
+    'Advancing Sustainable Health System Financing',
+    'Building a Resilient Health Workforce',
+    'Strengthening Emergency Preparedness and Management in Humanitarian,  Disaster, and Conflict Settings',
+    'Enhancing Medical Supply and Local Production'
   ];
 
   const handleChange = (e) => {

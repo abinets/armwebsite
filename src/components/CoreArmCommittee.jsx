@@ -74,7 +74,7 @@ const committeeMembers = [
   },
   {
     name: 'Mrs. Rahima Skihur',
-    position: 'Senior Advisor',
+    position: 'Senior Advisor to the Minister',
     department: 'Misinter\'s Office - MoH',
     role: 'Provides expert counsel on key policy decisions and strategic initiatives for the Minister\'s Office.',
     imageUrl: directImageUrls[8]

@@ -140,7 +140,7 @@ const Venue = () => {
                 <div className="bg-gradient-to-r from-[#015aa4] to-[#0273a4] text-white rounded-xl p-8 mb-8 shadow-lg">
                   <div className="flex items-center space-x-3 mb-4">
                     <SafeIcon icon={FiMapPin} className="w-6 h-6 text-cyan-200" />
-                    <h3 className="text-2xl font-bold">Jimma's Aba Jifar Meeting Hall</h3>
+                    <h3 className="text-2xl font-bold">Kora Tushine Convention Center, Jimma University</h3>
                   </div>
                   <p className="text-gray-200 mb-4">
                     Jimma, Oromia Region
