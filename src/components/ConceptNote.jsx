@@ -30,7 +30,7 @@ const ConceptNote = ({ onClose }) => {
             />
 
             <a
-                href="/ConceptNote.pdf"
+                href="/Concept-Note.pdf"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="mt-8 inline-flex justify-center py-3 px-6 border border-transparent shadow-sm text-lg font-semibold rounded-full text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
@@ -531,7 +531,7 @@ const ConceptNote = ({ onClose }) => {
             </section>
 
             <a
-                href="/ConceptNote.pdf"
+                href="/Concept-Note.pdf"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="mt-8 inline-flex justify-center py-3 px-6 border border-transparent shadow-sm text-lg font-semibold rounded-full text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"

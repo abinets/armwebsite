@@ -38,7 +38,7 @@ const Speakers = () => {
       title: 'State Minister',
       institution: 'Ministry of Health, Ethiopia',
       bio: 'H.E. Sahrela Abdulahi is a State Minister at the Ministry of Health in Ethiopia. She has a distinguished career in public service, with a focus on public health initiatives and health system capacity building. Having previously served in the same capacity, she has returned to the Ministry of Health to continue her important work.',
-      image: 'https://www.thereporterethiopia.com/wp-content/uploads/2023/01/Navigating-the-min.jpg'
+      image: '/H-Esahrela.jpeg'
     }
   ];
 
