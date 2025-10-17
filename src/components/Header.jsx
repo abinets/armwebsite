@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion'; // Added AnimatePresence here for consistency
 import SafeIcon from '../common/SafeIcon';
 import * as FiIcons from 'react-icons/fi';
-import RegistrationModal from './RegistrationModal'; 
+//import RegistrationModal from './RegistrationModal'; 
 
 const { FiMenu, FiX } = FiIcons;
 
