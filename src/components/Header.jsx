@@ -4,7 +4,8 @@ import SafeIcon from '../common/SafeIcon';
 import * as FiIcons from 'react-icons/fi';
 // IMPORT the Registration Modal and AnimatePresence
 import { AnimatePresence } from 'framer-motion'; 
-import RegistrationModal from './RegistrationModal'; // Adjust path if needed
+// 🔥 CORRECTION: Assuming RegistrationModal is in src/modals. Adjust this path if needed.
+import RegistrationModal from '../modals/RegistrationModal'; 
 
 const { FiMenu, FiX } = FiIcons;
 
@@ -63,7 +64,7 @@ const Header = () => {
       // Wait for all images to load before executing the scroll
       Promise.all(imagePromises).then(() => {
         const headerHeight = 80;
-        // ⭐ MODIFICATION 1: Add a slight delay to ensure correct calculation on first load
+        // ⭐ Scroll Fix 1: Add a slight delay to ensure correct calculation on first load
         setTimeout(() => {
             const elementPosition = element.offsetTop - headerHeight;
             window.scrollTo({
@@ -76,7 +77,7 @@ const Header = () => {
     setIsMobileMenuOpen(false);
   };
   
-  // ⭐ MODIFICATION 2: New useEffect to handle initial page load hash routing
+  // ⭐ Scroll Fix 2: New useEffect to handle initial page load hash routing
   useEffect(() => {
     const hash = window.location.hash;
     if (hash) {
@@ -242,10 +243,14 @@ const Header = () => {
       </motion.header>
       
       {/* The Reusable Modal is rendered outside the header */}
-      <RegistrationModal 
-        isModalOpen={isModalOpen} 
-        onClose={closeModal} 
-      />
+      <AnimatePresence>
+        {isModalOpen && (
+          <RegistrationModal 
+            isModalOpen={isModalOpen} 
+            onClose={closeModal} 
+          />
+        )}
+      </AnimatePresence>
     </>
   );
 };
