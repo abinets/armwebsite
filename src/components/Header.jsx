@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion'; // Added AnimatePresence here for consistency
 import SafeIcon from '../common/SafeIcon';
 import * as FiIcons from 'react-icons/fi';
-// 🔥 FINAL PATH CORRECTION: Use the most direct path. If it's in the same directory as Header.jsx, use './'
 import RegistrationModal from './RegistrationModal'; 
 
 const { FiMenu, FiX } = FiIcons;
